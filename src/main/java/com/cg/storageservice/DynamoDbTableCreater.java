@@ -18,7 +18,7 @@ import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 
 @Component
-public class CrudCommandLineRunner {
+public class DynamoDbTableCreater {
 
 	@Autowired
 	private DynamoDbAsyncClient asyncClient;
