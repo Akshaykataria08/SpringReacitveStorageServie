@@ -42,17 +42,14 @@ public class PaymentStorageRequestReceiver {
 			Payment payment = msg.value().getPayment();
 			storageService.isDuplicatePayment(payment).doOnNext(duplicatePayment -> {
 				if (duplicatePayment) {
-					System.out.println("Duplicate Payment");
 					paymentStorageAckProducer.generateMsg(msg.key(), createPaymentStorageAck(msg.value(), false,
 							new ErrorResponse("Duplicate Payment", 1, "DUPLICATE_PAYMENT")));
 				} else {
 					storageService.storePayment(payment)
 							.doOnSuccess(s -> {
-								System.out.println("Hello" + s);
 								paymentStorageAckProducer
 									.generateMsg(msg.key(), createPaymentStorageAck(msg.value(), true, null));
 							}).doOnError(e -> {
-								System.out.println("Bye" + e);
 								paymentStorageAckProducer.generateMsg(msg.key(),
 										createPaymentStorageAck(msg.value(), false, new ErrorResponse(
 												"Couldn't able to store Payment", 2, "INTERNAL_SERVER_ERROR")));

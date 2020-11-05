@@ -34,14 +34,12 @@ public class DynamoDbTableCreater {
         CompletableFuture<List<String>> listCompletableFuture = listTablesResponseCompletableFuture.thenApply(ListTablesResponse::tableNames);
         listCompletableFuture.thenAccept(tables -> {
             if (null != tables && !tables.contains(Payment.class.getSimpleName())) {
-            	System.out.println(tables);
                 DynamoDbAsyncTable<Payment> payment = enhancedAsyncClient.table(Payment.class.getSimpleName(), TableSchema.fromBean(Payment.class));
                 ProvisionedThroughput provisionedThroughput = ProvisionedThroughput.builder()
                         .readCapacityUnits(50L)
                         .writeCapacityUnits(50L)
                         .build();
                 payment.createTable(r -> r.provisionedThroughput(provisionedThroughput)).join();
-                System.out.println("Tables Created");
             }
         });
 	}

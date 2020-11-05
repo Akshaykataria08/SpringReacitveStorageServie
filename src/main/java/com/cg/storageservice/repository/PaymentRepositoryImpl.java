@@ -26,7 +26,6 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 	// CREATE
 	@Override
 	public Mono<Void> save(Payment payment) {
-		System.out.println(payment);
 		return Mono.fromFuture(paymentDynamoDbAsyncTable.putItem(payment));
 	}
 
