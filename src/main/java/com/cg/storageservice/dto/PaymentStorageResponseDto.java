@@ -16,8 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PaymentStorageResponseDto {
 
-	@NonNull
-	private PaymentWithActorRef paymentWithActorRef;
+	private String paymentId;
     @NonNull
     private Boolean response;
     private ErrorResponse error;

@@ -1,5 +1,7 @@
 package com.cg.storageservice.service;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +24,15 @@ public class StorageServiceImpl implements StorageService {
 	}
 
 	@Override
-	public Mono<Void> storePayment(PaymentMessage payment) {
-		return paymentRepository.save(payment);
+	public Mono<String> storePayment(PaymentMessage payment) {
+		String paymentId = this.generateAndAddPaymentId(payment);
+		return paymentRepository.save(payment).thenReturn(paymentId);
+	}
+
+	private String generateAndAddPaymentId(PaymentMessage payment) {
+		String paymentId = UUID.randomUUID().toString();
+		payment.setPaymentId(paymentId);
+		return paymentId;
 	}
 
 }

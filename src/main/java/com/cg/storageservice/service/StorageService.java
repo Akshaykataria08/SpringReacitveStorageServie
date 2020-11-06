@@ -8,6 +8,6 @@ public interface StorageService {
 
 	public Mono<Boolean> isDuplicatePayment(PaymentMessage payment);
 
-	public Mono<Void> storePayment(PaymentMessage payment);
+	public Mono<String> storePayment(PaymentMessage payment);
 
 }

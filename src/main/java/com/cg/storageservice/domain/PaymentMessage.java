@@ -12,6 +12,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbParti
 public class PaymentMessage {
 
     private String transactionId;
+    private String paymentId;
     private CustomerCreditTransferInitiation CstmrCdtTrfInitn;
 
     @DynamoDbPartitionKey
