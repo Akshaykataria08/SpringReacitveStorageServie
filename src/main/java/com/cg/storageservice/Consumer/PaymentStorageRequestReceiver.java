@@ -7,7 +7,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cg.storageservice.domain.Payment;
+import com.cg.storageservice.domain.PaymentMessage;
 import com.cg.storageservice.dto.PaymentStorageResponseDto;
 import com.cg.storageservice.dto.PaymentWithActorRef;
 import com.cg.storageservice.exception.ErrorResponse;
@@ -39,7 +39,7 @@ public class PaymentStorageRequestReceiver {
 		this.paymentStorageReceiver = this.createKafkaReceiver(PAYMENT_STORAGE_RECEIVER_TOPIC, paymentReceiverOptions);
 		this.paymentStorageReceiver.receive().doOnNext(msg -> {
 
-			Payment payment = msg.value().getPaymentMessage();
+			PaymentMessage payment = msg.value().getPaymentMessage();
 			storageService.isDuplicatePayment(payment).doOnNext(duplicatePayment -> {
 				if (duplicatePayment) {
 					paymentStorageAckProducer.generateMsg(msg.key(), createPaymentStorageAck(msg.value(), false,

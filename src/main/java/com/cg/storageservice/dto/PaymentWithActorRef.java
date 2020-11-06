@@ -1,6 +1,6 @@
 package com.cg.storageservice.dto;
 
-import com.cg.storageservice.domain.Payment;
+import com.cg.storageservice.domain.PaymentMessage;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import lombok.Setter;
 public class PaymentWithActorRef {
 
 	@NonNull
-	private Payment paymentMessage;
+	private PaymentMessage paymentMessage;
     @NonNull
 	private String actorPath;
 }

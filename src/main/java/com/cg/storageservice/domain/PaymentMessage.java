@@ -9,7 +9,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbParti
 @Data
 @NoArgsConstructor
 @DynamoDbBean
-public class Payment {
+public class PaymentMessage {
 
     private String transactionId;
     private CustomerCreditTransferInitiation CstmrCdtTrfInitn;

@@ -8,7 +8,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cg.storageservice.domain.Payment;
+import com.cg.storageservice.domain.PaymentMessage;
 
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
@@ -33,8 +33,8 @@ public class DynamoDbTableCreater {
 		CompletableFuture<ListTablesResponse> listTablesResponseCompletableFuture = asyncClient.listTables();
         CompletableFuture<List<String>> listCompletableFuture = listTablesResponseCompletableFuture.thenApply(ListTablesResponse::tableNames);
         listCompletableFuture.thenAccept(tables -> {
-            if (null != tables && !tables.contains(Payment.class.getSimpleName())) {
-                DynamoDbAsyncTable<Payment> payment = enhancedAsyncClient.table(Payment.class.getSimpleName(), TableSchema.fromBean(Payment.class));
+            if (null != tables && !tables.contains(PaymentMessage.class.getSimpleName())) {
+                DynamoDbAsyncTable<PaymentMessage> payment = enhancedAsyncClient.table(PaymentMessage.class.getSimpleName(), TableSchema.fromBean(PaymentMessage.class));
                 ProvisionedThroughput provisionedThroughput = ProvisionedThroughput.builder()
                         .readCapacityUnits(50L)
                         .writeCapacityUnits(50L)

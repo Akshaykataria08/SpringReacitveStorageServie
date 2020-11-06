@@ -2,20 +2,20 @@ package com.cg.storageservice.repository;
 
 import java.util.concurrent.CompletableFuture;
 
-import com.cg.storageservice.domain.Payment;
+import com.cg.storageservice.domain.PaymentMessage;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface PaymentRepository {
 
-	public Mono<Void> save(Payment payment);
+	public Mono<Void> save(PaymentMessage payment);
 
-	public Mono<Payment> getPaymentById(String msgId);
+	public Mono<PaymentMessage> getPaymentById(String msgId);
 
-	public Mono<Payment> updatePayment(Payment payment);
+	public Mono<PaymentMessage> updatePayment(PaymentMessage payment);
 
-	public CompletableFuture<Payment> deletePaymentById(String msgId);
+	public CompletableFuture<PaymentMessage> deletePaymentById(String msgId);
 
-	public Flux<Payment> getAllPayment();
+	public Flux<PaymentMessage> getAllPayment();
 }
