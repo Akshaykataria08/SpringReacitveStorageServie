@@ -42,28 +42,31 @@ public class PaymentStorageRequestReceiver {
 			PaymentMessage payment = msg.value().getPaymentMessage();
 			storageService.isDuplicatePayment(payment).doOnNext(duplicatePayment -> {
 				if (duplicatePayment) {
-					paymentStorageAckProducer.generateMsg(msg.key(), createPaymentStorageAck(null, false,
-							new ErrorResponse("Duplicate Payment", 1, "DUPLICATE_PAYMENT")));
+					paymentStorageAckProducer.generateMsg(msg.key(),
+							createPaymentStorageAck(null, msg.value().getActorPath(), false,
+									new ErrorResponse("Duplicate Payment", 1, "DUPLICATE_PAYMENT")));
 				} else {
 					storageService.storePayment(payment)
-						.doOnNext(paymentId -> paymentStorageAckProducer.generateMsg(msg.key(),
-							createPaymentStorageAck(paymentId, true, null)))
-						.doOnError(e -> paymentStorageAckProducer.generateMsg(msg.key(),
-										createPaymentStorageAck(null, false, new ErrorResponse(
-												"Couldn't able to store Payment", 2, "INTERNAL_SERVER_ERROR"))))
-						.subscribe();
+							.doOnNext(paymentId -> paymentStorageAckProducer.generateMsg(msg.key(),
+									createPaymentStorageAck(paymentId, msg.value().getActorPath(), true, null)))
+							.doOnError(e -> paymentStorageAckProducer.generateMsg(msg.key(),
+									createPaymentStorageAck(null, msg.value().getActorPath(), false, new ErrorResponse(
+											"Couldn't able to store Payment", 2, "INTERNAL_SERVER_ERROR"))))
+							.subscribe();
 				}
 			}).doOnError(r -> paymentStorageAckProducer.generateMsg(msg.key(),
-					createPaymentStorageAck(null, false,
+					createPaymentStorageAck(null, msg.value().getActorPath(), false,
 							new ErrorResponse("Couldn't able to store Payment", 2, "INTERNAL_SERVER_ERROR"))))
-			.subscribe();
+					.subscribe();
 
 			msg.receiverOffset().acknowledge();
 		}).subscribe();
 	}
 
-	private PaymentStorageResponseDto createPaymentStorageAck(String paymentId, Boolean response, ErrorResponse error) {
+	private PaymentStorageResponseDto createPaymentStorageAck(String paymentId, String actorPath, Boolean response,
+			ErrorResponse error) {
 		PaymentStorageResponseDto dto = new PaymentStorageResponseDto();
+		dto.setActorPath(actorPath);
 		dto.setPaymentId(paymentId);
 		dto.setResponse(response);
 		if (!response) {
