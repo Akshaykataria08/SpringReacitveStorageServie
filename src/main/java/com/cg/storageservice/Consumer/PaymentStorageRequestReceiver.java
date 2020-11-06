@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cg.storageservice.domain.Payment;
-import com.cg.storageservice.dto.PaymentStorageRequestDto;
 import com.cg.storageservice.dto.PaymentStorageResponseDto;
+import com.cg.storageservice.dto.PaymentWithActorRef;
 import com.cg.storageservice.exception.ErrorResponse;
 import com.cg.storageservice.producer.PaymentStorageAckProducer;
 import com.cg.storageservice.service.StorageService;
@@ -23,7 +23,7 @@ import reactor.kafka.receiver.ReceiverOptions;
 public class PaymentStorageRequestReceiver {
 
 	@Autowired
-	private ReceiverOptions<String, PaymentStorageRequestDto> paymentReceiverOptions;
+	private ReceiverOptions<String, PaymentWithActorRef> paymentReceiverOptions;
 
 	@Autowired
 	private StorageService storageService;
@@ -32,14 +32,14 @@ public class PaymentStorageRequestReceiver {
 	private PaymentStorageAckProducer paymentStorageAckProducer;
 
 	private static String PAYMENT_STORAGE_RECEIVER_TOPIC = "payment-storage-topic";
-	private KafkaReceiver<String, PaymentStorageRequestDto> paymentStorageReceiver;
+	private KafkaReceiver<String, PaymentWithActorRef> paymentStorageReceiver;
 
 	@PostConstruct
 	public void initializePaymentStorageReceiver() {
 		this.paymentStorageReceiver = this.createKafkaReceiver(PAYMENT_STORAGE_RECEIVER_TOPIC, paymentReceiverOptions);
 		this.paymentStorageReceiver.receive().doOnNext(msg -> {
 
-			Payment payment = msg.value().getPayment();
+			Payment payment = msg.value().getPaymentMessage();
 			storageService.isDuplicatePayment(payment).doOnNext(duplicatePayment -> {
 				if (duplicatePayment) {
 					paymentStorageAckProducer.generateMsg(msg.key(), createPaymentStorageAck(msg.value(), false,
@@ -64,11 +64,11 @@ public class PaymentStorageRequestReceiver {
 		}).subscribe();
 	}
 
-	private PaymentStorageResponseDto createPaymentStorageAck(PaymentStorageRequestDto paymentStorageRequestDto,
+	private PaymentStorageResponseDto createPaymentStorageAck(PaymentWithActorRef paymentStorageRequestDto,
 			Boolean response, ErrorResponse error) {
 		PaymentStorageResponseDto dto = new PaymentStorageResponseDto();
-		dto.setActorPath(paymentStorageRequestDto.getActorPath());
-		dto.setPayment(paymentStorageRequestDto.getPayment());
+		PaymentWithActorRef paymentWithActorRef = new PaymentWithActorRef(paymentStorageRequestDto.getPaymentMessage(), paymentStorageRequestDto.getActorPath());
+		dto.setPaymentWithActorRef(paymentWithActorRef);
 		dto.setResponse(response);
 		if (!response) {
 			if (error == null) {
@@ -79,10 +79,10 @@ public class PaymentStorageRequestReceiver {
 		return dto;
 	}
 
-	private KafkaReceiver<String, PaymentStorageRequestDto> createKafkaReceiver(String topic,
-			ReceiverOptions<String, PaymentStorageRequestDto> paymentReceiverOptions) {
+	private KafkaReceiver<String, PaymentWithActorRef> createKafkaReceiver(String topic,
+			ReceiverOptions<String, PaymentWithActorRef> paymentReceiverOptions) {
 
-		ReceiverOptions<String, PaymentStorageRequestDto> options = paymentReceiverOptions
+		ReceiverOptions<String, PaymentWithActorRef> options = paymentReceiverOptions
 				.subscription(Collections.singleton(topic))
 				.addAssignListener(partitions -> log.debug("onPartitionsAssigned {}", partitions))
 				.addRevokeListener(partitions -> log.debug("onPartitionsRevoked {}", partitions));

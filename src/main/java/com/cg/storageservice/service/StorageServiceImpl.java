@@ -16,9 +16,9 @@ public class StorageServiceImpl implements StorageService {
 	
 	@Override
 	public Mono<Boolean> isDuplicatePayment(Payment payment) {
-		Mono<Payment> paymentMono =  paymentRepository.getPaymentById(payment.getMsgId()).defaultIfEmpty(new Payment());
+		Mono<Payment> paymentMono =  paymentRepository.getPaymentById(payment.getTransactionId()).defaultIfEmpty(new Payment());
 		paymentMono.subscribe();
-		return paymentMono.map(paymentObj -> paymentObj.getMsgId() != null);
+		return paymentMono.map(paymentObj -> paymentObj.getTransactionId() != null);
 	}
 
 	@Override

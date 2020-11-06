@@ -1,8 +1,7 @@
 package com.cg.storageservice.dto;
 
-import com.cg.storageservice.exception.ErrorResponse;
+import com.cg.storageservice.domain.Payment;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -13,12 +12,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
-@AllArgsConstructor
-public class PaymentStorageResponseDto {
+public class PaymentWithActorRef {
 
 	@NonNull
-	private PaymentWithActorRef paymentWithActorRef;
+	private Payment paymentMessage;
     @NonNull
-    private Boolean response;
-    private ErrorResponse error;
+	private String actorPath;
 }

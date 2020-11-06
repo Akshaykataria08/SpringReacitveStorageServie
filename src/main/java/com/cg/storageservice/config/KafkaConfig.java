@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import com.cg.storageservice.deserializer.PaymentStorageRequestDtoDeserializer;
-import com.cg.storageservice.dto.PaymentStorageRequestDto;
 import com.cg.storageservice.dto.PaymentStorageResponseDto;
+import com.cg.storageservice.dto.PaymentWithActorRef;
 
 import reactor.kafka.receiver.ReceiverOptions;
 import reactor.kafka.sender.KafkaSender;
@@ -40,7 +40,7 @@ public class KafkaConfig {
 	}
 
 	@Bean
-	public ReceiverOptions<String, PaymentStorageRequestDto> paymentStorageReceiverOptions() {
+	public ReceiverOptions<String, PaymentWithActorRef> paymentStorageReceiverOptions() {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 		props.put(ConsumerConfig.CLIENT_ID_CONFIG, CLIENT_ID);

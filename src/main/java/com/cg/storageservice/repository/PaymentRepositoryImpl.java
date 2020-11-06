@@ -53,6 +53,10 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 		return Flux.from(paymentDynamoDbAsyncTable.scan().items());
 	}
 	
+//	public Mono<Payment> getPayment(String msgId, Integer amount) {
+//		paymentDynamoDbAsyncTable.query(r -> r.queryConditional(queryConditional))
+//	}
+	
 	private Key getKeyBuild(String msgId) {
 		return Key.builder().partitionValue(msgId).build();
 	}
